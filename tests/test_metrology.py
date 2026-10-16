@@ -5,6 +5,9 @@ from openpyxl import Workbook
 from app.domain.models import FinalOpinion, MeasurementPoint, PointStatus
 from app.domain.services import MetrologyProcessorService
 from app.infrastructure.xlsx_reader import read_measurements
+from pathlib import Path
+
+import pytest
 
 
 def test_processes_average_error_lea_and_approved_opinion():
@@ -48,3 +51,25 @@ def test_reads_xlsx_with_metadata_and_tolerance_columns():
     assert points[0].parameter == "P1"
     assert points[0].lea == 0.2
     assert points[0].readings == (10.1, 10.3)
+
+
+def test_reads_official_dados_xlsx():
+    file_path = Path(__file__).resolve().parent / "dados.xlsx"
+
+    assert file_path.exists(), (
+        f"Planilha oficial não encontrada: {file_path}"
+    )
+
+    metadata, points = read_measurements(file_path.read_bytes())
+
+    assert len(points) == 14
+    assert all(point.parameter for point in points)
+    assert all(point.readings for point in points)
+    assert all(point.lea >= 0 for point in points)
+
+
+def test_rejects_invalid_xlsx_file():
+    invalid_content = b"isto nao e um arquivo Excel"
+
+    with pytest.raises(ValueError):
+        read_measurements(invalid_content)

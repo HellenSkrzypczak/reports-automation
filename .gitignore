@@ -17,3 +17,12 @@ __pycache__/
 .env
 .env.*
 !.env.example
+
+# Dependencias e arquivos temporarios
+.venv/
+__pycache__/
+.pytest_cache/
+*.py[cod]
+*.egg-info/
+node_modules/
+.env

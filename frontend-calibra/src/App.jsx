@@ -70,10 +70,13 @@ export default function App() {
       const formData = new FormData();
       formData.append("file", file);
 
-      const response = await fetch("/api/v1/calibrations/process", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        "http://127.0.0.1:8000/api/v1/calibrations/process",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       let body = {};
       try {
@@ -224,9 +227,8 @@ export default function App() {
             />
 
             <div
-              className={`dropzone ${dragging ? "dragging" : ""} ${
-                file ? "has-file" : ""
-              }`}
+              className={`dropzone ${dragging ? "dragging" : ""} ${file ? "has-file" : ""
+                }`}
               role="button"
               tabIndex={0}
               onClick={() => inputRef.current?.click()}
@@ -327,9 +329,8 @@ export default function App() {
                 <h2>Resumo da análise</h2>
               </div>
               <div
-                className={`verdict-pill ${
-                  approved ? "verdict-approved" : "verdict-rejected"
-                }`}
+                className={`verdict-pill ${approved ? "verdict-approved" : "verdict-rejected"
+                  }`}
               >
                 {approved ? (
                   <CheckCircle2 size={17} />
@@ -369,8 +370,8 @@ export default function App() {
                         {value === null || value === undefined
                           ? "—"
                           : typeof value === "object"
-                          ? JSON.stringify(value)
-                          : String(value)}
+                            ? JSON.stringify(value)
+                            : String(value)}
                       </strong>
                     </div>
                   ))}
@@ -399,29 +400,22 @@ export default function App() {
                     </tr>
                   </thead>
                   <tbody>
+
                     {rows.map((row, index) => {
                       const isWithin =
                         row.status === "DENTRO_DA_TOLERANCIA";
+
                       return (
-                        <tr key={row.ponto ?? row.ponto_ensaio ?? index}>
-                          <td>{row.ponto ?? row.ponto_ensaio ?? index + 1}</td>
-                          <td>
-                            {formatNumber(
-                              row.valor_referencia ?? row.referencia
-                            )}
-                          </td>
+                        <tr key={`${row.parametro ?? "ponto"}-${index}`}>
+                          <td>{row.parametro ?? index + 1}</td>
+                          <td>{formatNumber(row.nominal)}</td>
                           <td>{formatNumber(row.media)}</td>
-                          <td>
-                            {formatNumber(
-                              row.erro_sistematico ?? row.erro
-                            )}
-                          </td>
+                          <td>{formatNumber(row.erro_sistematico)}</td>
                           <td>{formatNumber(row.lea)}</td>
                           <td>
                             <span
-                              className={`status-badge ${
-                                isWithin ? "status-good" : "status-bad"
-                              }`}
+                              className={`status-badge ${isWithin ? "status-good" : "status-bad"
+                                }`}
                             >
                               {isWithin ? (
                                 <CheckCircle2 size={14} />
